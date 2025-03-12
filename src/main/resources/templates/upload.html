@@ -6,56 +6,51 @@
     <title>Audio to Text Converter</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        /* Background Animation */
-        @keyframes wave {
-            0% { transform: scaleY(1); }
-            50% { transform: scaleY(1.5); }
-            100% { transform: scaleY(1); }
-        }
-
         body {
-            background-color: #121212;
+            background: url('https://www.stelizabeth.com/healthyheadlines/wp-content/uploads/2020/10/podcast-headphones-sound-bar.jpg') no-repeat center center fixed;
+            background-size: cover;
             color: white;
-            overflow: hidden;
             position: relative;
         }
 
-        .wave-container {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 5px;
-        }
-
-        .wave {
-            width: 5px;
-            height: 40px;
-            background: #1DB954;
-            animation: wave 1.2s infinite ease-in-out;
-        }
-
-        .wave:nth-child(2) { animation-delay: 0.1s; }
-        .wave:nth-child(3) { animation-delay: 0.2s; }
-        .wave:nth-child(4) { animation-delay: 0.3s; }
-        .wave:nth-child(5) { animation-delay: 0.4s; }
-        .wave:nth-child(6) { animation-delay: 0.5s; }
+       
 
         .container {
             max-width: 600px;
             margin-top: 50px;
-            background: #1E1E1E;
+            background: rgba(30, 30, 30, 0.9);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0px 0px 20px rgba(0, 255, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Transcription Box */
+        .transcription-container {
+            max-width: 800px;
+            margin-top: 30px;
+            background: rgba(50, 50, 50, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 255, 0, 0.3);
+            display: none; /* Hidden by default */
+        }
+
+        .transcription-text {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            border-radius: 5px;
+            background: rgba(20, 20, 20, 0.9);
+            color: #1DB954;
+            text-align: left;
         }
 
         #loading {
             display: none;
             font-size: 18px;
             color: #1DB954;
-            text-align: center;
         }
 
         .spinner {
@@ -74,29 +69,11 @@
                 transform: rotate(360deg);
             }
         }
-
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            color: #1DB954;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Audio Wave Animation -->
-    <div class="wave-container">
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
-    </div>
-
-    <div class="container text-center">
+    <div class="container">
         <h2 class="mb-4">Audio to Text Converter</h2>
 
         <form id="uploadForm">
@@ -107,8 +84,12 @@
         </form>
 
         <p id="loading">Converting to text... <span class="spinner"></span></p>
+    </div>
 
-        <p id="result" class="mt-3"></p>
+    <!-- Transcription Output Box -->
+    <div id="transcriptionContainer" class="transcription-container mx-auto">
+        <h4>Transcription Result:</h4>
+        <div id="result" class="transcription-text"></div>
     </div>
 
     <script>
@@ -116,9 +97,11 @@
             event.preventDefault();
             
             let formData = new FormData(this);
+            let resultContainer = document.getElementById("transcriptionContainer");
+            let resultText = document.getElementById("result");
 
             document.getElementById("loading").style.display = "block";
-            document.getElementById("result").innerText = "";
+            resultContainer.style.display = "none"; // Hide result box before new request
 
             let response = await fetch("/api/audio/upload", {
                 method: "POST",
@@ -128,7 +111,9 @@
             let data = await response.json();
 
             document.getElementById("loading").style.display = "none";
-            document.getElementById("result").innerText = "Transcription: " + data.transcription;
+            resultText.innerText = data.transcription;
+
+            resultContainer.style.display = "block"; // Show result box when text is available
         });
     </script>
 
