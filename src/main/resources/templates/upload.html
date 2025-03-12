@@ -1,123 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio to Text Converter</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background: url('https://www.stelizabeth.com/healthyheadlines/wp-content/uploads/2020/10/podcast-headphones-sound-bar.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio to Text Converter</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<style>
+body {
+	background:
+		url('https://www.stelizabeth.com/healthyheadlines/wp-content/uploads/2020/10/podcast-headphones-sound-bar.jpg')
+		no-repeat center center fixed;
+	background-size: cover;
+	color: white;
+	position: relative;
+}
 
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+body::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
 
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
-            padding: 30px;
-            text-align: center;
-        }
+.container {
+	max-width: 600px;
+	margin-top: 50px;
+	padding: 30px;
+	text-align: center;
+}
 
-        .transcription-container {
-            max-width: 800px;
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 20px rgba(0, 255, 0, 0.3);
-            display: none;
-        }
+.transcription-container {
+	max-width: 800px;
+	margin-top: 30px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 255, 0, 0.3);
+	display: none;
+}
 
-        .transcription-text {
-            max-height: 250px;
-            overflow-y: auto;
-            padding: 15px;
-            border: 1px solid rgba(0, 255, 0, 0.5);
-            border-radius: 5px;
-            background: rgba(20, 20, 20, 0.9);
-            color: #1DB954;
-            text-align: left;
-        }
+.transcription-text {
+	max-height: 250px;
+	overflow-y: auto;
+	padding: 15px;
+	border: 1px solid rgba(0, 255, 0, 0.5);
+	border-radius: 5px;
+	background: rgba(20, 20, 20, 0.9);
+	color: #1DB954;
+	text-align: left;
+}
 
-        #loading {
-            display: none;
-            font-size: 18px;
-            color: #1DB954;
-        }
+#loading {
+	display: none;
+	font-size: 18px;
+	color: #1DB954;
+}
 
-        .spinner {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            border: 4px solid rgba(0, 255, 0, 0.3);
-            border-radius: 50%;
-            border-top-color: #1DB954;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
+.spinner {
+	display: inline-block;
+	width: 25px;
+	height: 25px;
+	border: 4px solid rgba(0, 255, 0, 0.3);
+	border-radius: 50%;
+	border-top-color: #1DB954;
+	animation: spin 1s linear infinite;
+	margin-left: 10px;
+}
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+@
+keyframes spin {to { transform:rotate(360deg);
+	
+}
 
-        #recordButton {
-            margin-top: 2px;
-        }
+}
+#recordButton {
+	margin-top: 2px;
+}
 
-        #recordButton.recording {
-            background-color: red;
-        }
+#recordButton.recording {
+	background-color: red;
+}
 
-        #resetButton {
-            margin-top: 10px;
-            display: none;
-        }
-    </style>
+#resetButton {
+	margin-top: 10px;
+	display: none;
+}
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <h2 class="mb-4">Audio to Text Converter</h2>
+	<div class="container">
+		<h2 class="mb-4">Audio to Text Converter</h2>
 
-        <!-- File Upload Form -->
-        <form id="uploadForm">
-            <div class="mb-3">
-                <input class="form-control" type="file" name="file" id="fileInput">
-            </div>
-            <button type="submit" class="btn btn-success" id="uploadButton" disabled>Convert to Text</button>
-        </form>
+		<!-- File Upload Form -->
+		<form id="uploadForm">
+			<div class="mb-3 d-flex align-items-center">
+				<input class="form-control me-2" type="file" name="file"
+					id="fileInput">
 
-        <p>OR</p>
+				<!-- Audio Recording Button -->
+				<button id="recordButton" class="btn btn-danger">Record</button>
+			</div>
 
-        <!-- Audio Recording Button -->
-        <button id="recordButton" class="btn btn-danger">Start Recording</button>
+			
+			<div class="d-flex justify-content-center">
+    <button type="button" id="resetButton" class="btn btn-warning me-auto" style="display: none;">Reset</button>
+</div>
 
-        <p id="loading">Processing... <span class="spinner"></span></p>
+<div class="d-flex justify-content-center mt-2">
+    <button type="submit" class="btn btn-success" id="uploadButton" disabled>Convert to Text</button>
+</div>
+			
 
-        <!-- Reset Button -->
-        <button id="resetButton" class="btn btn-warning">Reset</button>
-    </div>
+		</form>
 
-    <!-- Transcription Output Box -->
-    <div id="transcriptionContainer" class="transcription-container mx-auto">
-        <h4>Transcription Result:</h4>
-        <div id="result" class="transcription-text"></div>
-    </div>
 
-    <script>
+
+
+
+		<p id="loading">
+			Processing... <span class="spinner"></span>
+		</p>
+
+
+	</div>
+
+	<!-- Transcription Output Box -->
+	<div id="transcriptionContainer"
+		class="transcription-container mx-auto">
+		<h4>Transcription Result:</h4>
+		<div id="result" class="transcription-text"></div>
+	</div>
+
+	<script>
         let mediaRecorder;
         let audioChunks = [];
         let fileInput = document.getElementById("fileInput");
