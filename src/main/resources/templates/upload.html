@@ -70,12 +70,14 @@ body::before {
 	margin-left: 10px;
 }
 
-@
-keyframes spin {to { transform:rotate(360deg);
-	
+@keyframes spin {
+to 
+{ 
+transform:rotate(360deg);	
 }
 
 }
+
 #recordButton {
 	margin-top: 2px;
 }
@@ -105,15 +107,17 @@ keyframes spin {to { transform:rotate(360deg);
 				<button id="recordButton" class="btn btn-danger">Record</button>
 			</div>
 
-			
-			<div class="d-flex justify-content-center">
-    <button type="button" id="resetButton" class="btn btn-warning me-auto" style="display: none;">Reset</button>
-</div>
 
-<div class="d-flex justify-content-center mt-2">
-    <button type="submit" class="btn btn-success" id="uploadButton" disabled>Convert to Text</button>
-</div>
-			
+			<div class="d-flex justify-content-center">
+				<button type="button" id="resetButton"
+					class="btn btn-warning me-auto" style="display: none;">Reset</button>
+			</div>
+
+			<div class="d-flex justify-content-center mt-2">
+				<button type="submit" class="btn btn-success" id="uploadButton"
+					disabled>Convert to Text</button>
+			</div>
+
 
 		</form>
 

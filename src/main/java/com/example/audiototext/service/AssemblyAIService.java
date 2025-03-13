@@ -18,8 +18,9 @@ import org.springframework.http.HttpMethod;
 @Service
 public class AssemblyAIService {
 
-    @Value("${assemblyai.api.key}")
-    private String apiKey;
+	
+    private String apiKey=System.getenv("API_KEY");
+    
 
     public String transcribeAudio(MultipartFile file) throws IOException, InterruptedException {
         String uploadUrl = uploadFileToAssemblyAI(file);
@@ -30,6 +31,7 @@ public class AssemblyAIService {
 
     private String uploadFileToAssemblyAI(MultipartFile file) throws IOException {
         HttpHeaders headers = new HttpHeaders();
+        System.out.println(apiKey);
         headers.set("Authorization", apiKey);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
