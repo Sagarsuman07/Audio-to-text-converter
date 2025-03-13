@@ -22,10 +22,13 @@ public class AudioController {
     private AssemblyAIService assemblyAIService;
 
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> uploadAudio(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> uploadAudio(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("separateSpeakers") boolean separateSpeakers) {  // New parameter
+
         Map<String, String> response = new HashMap<>();
         try {
-            String transcript = assemblyAIService.transcribeAudio(file);
+            String transcript = assemblyAIService.transcribeAudio(file, separateSpeakers); // Pass parameter
             response.put("transcription", transcript);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -33,5 +36,4 @@ public class AudioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 }

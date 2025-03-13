@@ -70,14 +70,11 @@ body::before {
 	margin-left: 10px;
 }
 
-@keyframes spin {
-to 
-{ 
-transform:rotate(360deg);	
+@keyframes spin {to { transform:rotate(360deg);
+	
 }
 
 }
-
 #recordButton {
 	margin-top: 2px;
 }
@@ -111,7 +108,16 @@ transform:rotate(360deg);
 			<div class="d-flex justify-content-center">
 				<button type="button" id="resetButton"
 					class="btn btn-warning me-auto" style="display: none;">Reset</button>
+					
+					<div class="form-check form-switch mt-3">
+				<input class="form-check-input" type="checkbox"
+					id="separateSpeakersSwitch"> <label
+					class="form-check-label" for="separateSpeakersSwitch">Separate
+					Speakers</label>
 			</div>
+			</div>
+
+		
 
 			<div class="d-flex justify-content-center mt-2">
 				<button type="submit" class="btn btn-success" id="uploadButton"
@@ -161,6 +167,9 @@ transform:rotate(360deg);
             event.preventDefault();
 
             let formData = new FormData(this);
+            let separateSpeakers = document.getElementById("separateSpeakersSwitch").checked;
+            formData.append("separateSpeakers", separateSpeakers);
+
             let resultContainer = document.getElementById("transcriptionContainer");
             let resultText = document.getElementById("result");
 

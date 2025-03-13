@@ -2,6 +2,7 @@ package com.example.audiototext.service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -22,16 +23,16 @@ public class AssemblyAIService {
     private String apiKey=System.getenv("API_KEY");
     
 
-    public String transcribeAudio(MultipartFile file) throws IOException, InterruptedException {
+    public String transcribeAudio(MultipartFile file, boolean separateSpeakers) throws IOException, InterruptedException {
         String uploadUrl = uploadFileToAssemblyAI(file);
-        return getTranscription(uploadUrl);
+        return getTranscription(uploadUrl, separateSpeakers);
     }
+
     
     
 
     private String uploadFileToAssemblyAI(MultipartFile file) throws IOException {
         HttpHeaders headers = new HttpHeaders();
-        System.out.println(apiKey);
         headers.set("Authorization", apiKey);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -47,26 +48,30 @@ public class AssemblyAIService {
     
     
 
-    private String getTranscription(String uploadUrl) throws InterruptedException {
-        Map<String, String> request = new HashMap<>();
+    private String getTranscription(String uploadUrl, boolean separateSpeakers) throws InterruptedException {
+        Map<String, Object> request = new HashMap<>();
         request.put("audio_url", uploadUrl);
+
+        if (separateSpeakers) {
+            request.put("speaker_labels", true);  // Enable speaker diarization
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
         ResponseEntity<Map> response = new RestTemplate().postForEntity("https://api.assemblyai.com/v2/transcript", entity, Map.class);
 
         String transcriptId = (String) response.getBody().get("id");
-
-        return pollTranscriptionResult(transcriptId);
+        return pollTranscriptionResult(transcriptId, separateSpeakers);
     }
 
+
     
     
     
-    private String pollTranscriptionResult(String transcriptId) throws InterruptedException {
+    private String pollTranscriptionResult(String transcriptId, boolean separateSpeakers) throws InterruptedException {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", apiKey);
 
@@ -85,16 +90,48 @@ public class AssemblyAIService {
 
             String status = (String) response.getBody().get("status");
             if ("completed".equals(status)) {
-                return (String) response.getBody().get("text");
+                if (separateSpeakers) {
+                    return formatSpeakerText(response.getBody()); // Extract speaker-wise text
+                } else {
+                    return (String) response.getBody().get("text");
+                }
             } else if ("failed".equals(status)) {
                 return "Transcription failed.";
             }
 
-            Thread.sleep(5000);
-            attempt++;
+            
+            if(separateSpeakers)
+            {
+            	Thread.sleep(10000);
+                attempt++;
+            }
+            else
+            {
+            	Thread.sleep(5000);
+                attempt++;
+            }
+            
         }
 
         return "Transcription timed out.";
     }
+
+    
+    
+    private String formatSpeakerText(Map<String, Object> transcriptionData) {
+        List<Map<String, Object>> utterances = (List<Map<String, Object>>) transcriptionData.get("utterances");
+        if (utterances == null) {
+            return "No speaker data available.";
+        }
+
+        StringBuilder formattedText = new StringBuilder();
+        for (Map<String, Object> utterance : utterances) {
+            String speaker = "Speaker " + utterance.get("speaker");
+            String text = (String) utterance.get("text");
+            formattedText.append(speaker).append(": ").append(text).append("\n");
+        }
+        return formattedText.toString();
+    }
+
 
 }
