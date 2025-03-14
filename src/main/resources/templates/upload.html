@@ -109,7 +109,8 @@ body::before {
 					id="fileInput">
 
 				<!-- Audio Recording Button -->
-				<button id="recordButton" class="btn btn-danger">Record</button>
+				<button type="button" id="record" class="btn btn-danger">Record</button>
+				
 			</div>
 
 
@@ -217,10 +218,9 @@ body::before {
 	    let transcriptionText="";
 	    
 	
-        let mediaRecorder;
-        let audioChunks = [];
+        
         let fileInput = document.getElementById("fileInput");
-        let recordButton = document.getElementById("recordButton");
+        let recordButton = document.getElementById("record");
         let uploadButton = document.getElementById("uploadButton");
         let resetButton = document.getElementById("resetButton");
 
@@ -352,55 +352,84 @@ body::before {
        
      
      
+       
+        let rec, audioChunks = [], recording = false;
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                rec = new MediaRecorder(stream);
+                rec.ondataavailable = e => {
+                    audioChunks.push(e.data);
+                    if (rec.state === "inactive") {
+                        let blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                       
+                        sendData(blob);
+                    }
+                };
+            });
+
+        function sendData(data) {
+        	
+        	//start spinner
+        	document.getElementById("loading").style.display = "block";
+        	
+        	
+            let formData = new FormData();
+            formData.append("file", data, "recording.mp3");
+
+            let separateSpeakers = document.getElementById("separateSpeakersSwitch").checked;
+            formData.append("separateSpeakers", separateSpeakers);
+
+            fetch("/api/audio/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+            	transcriptionText=result.transcription;
+                document.getElementById("result").innerText = transcriptionText || "No transcription available";
+                document.getElementById("transcriptionContainer").style.display = "block";
+                
+                //stop spinner
+            	document.getElementById("loading").style.display = "none";
+                
+                // hide the original text button
+                document.getElementById('originaltextbuttoncontainer').style.display = 'none';
+                
+                
+                // show the form
+                document.getElementById('uploadtextForm').style.display = 'block';
+                
+                // Enable button after translation
+                let translateButton = document.getElementById("translateButton");
+                translateButton.disabled = false;  
+
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("result").innerText = "Error processing transcription.";
+            });
+        }
+
+
+
+        document.getElementById("record").onclick = function () {
+            if (!recording) {
+                this.textContent = "Stop";
+                this.style.backgroundColor = "blue";
+                audioChunks = [];
+                rec.start();
+            } else {
+                this.textContent = "Record";
+                this.style.backgroundColor = "red";
+                rec.stop();
+            }
+            recording = !recording;
+        };
+     
      
 
-        // Handle audio recording
-        recordButton.addEventListener("click", async function() {
-            if (recordButton.classList.contains("recording")) {
-                mediaRecorder.stop();
-                recordButton.classList.remove("recording");
-                recordButton.textContent = "🎤 Start Recording";
-            } else {
-                let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-
-                mediaRecorder.ondataavailable = event => {
-                    audioChunks.push(event.data);
-                };
-
-                mediaRecorder.onstop = async () => {
-                    let audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-                    audioChunks = [];
-
-                    let formData = new FormData();
-                    formData.append("file", audioBlob, "recorded_audio.wav");
-
-                    document.getElementById("loading").style.display = "block";
-
-                    let response = await fetch("/api/audio/upload", {
-                        method: "POST",
-                        body: formData
-                    });
-
-                    let data = await response.json();
-                    document.getElementById("loading").style.display = "none";
-
-                    let resultContainer = document.getElementById("transcriptionContainer");
-                    let resultText = document.getElementById("result");
-
-                    resultText.innerText = data.transcription;
-                    resultContainer.style.display = "block";
-                };
-
-                mediaRecorder.start();
-                recordButton.classList.add("recording");
-                recordButton.textContent = "⏹ Stop Recording";
-
-                // Disable file input when recording starts
-                fileInput.disabled = true;
-                resetButton.style.display = "block";
-            }
-        });
+        
 
         // Reset Selection
         resetButton.addEventListener("click", function() {
