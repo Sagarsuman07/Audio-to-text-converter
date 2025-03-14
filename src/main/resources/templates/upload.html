@@ -59,6 +59,14 @@ body::before {
 	color: #1DB954;
 }
 
+
+#loading2 {
+	display: none;
+	font-size: 18px;
+	color: #1DB954;
+}
+
+
 .spinner {
 	display: inline-block;
 	width: 25px;
@@ -131,7 +139,7 @@ body::before {
 
 
 
-		<p id="loading">
+		<p id="loading" class="mt-3">
 			Processing... <span class="spinner"></span>
 		</p>
 
@@ -172,20 +180,36 @@ body::before {
 				<div id="translateContainer">
 					<button id="translateButton" class="btn btn-primary">Translate</button>
 				</div>
+				
+				
+				<p id="loading2" class="ml-6">
+			         Processing... <span class="spinner"></span>
+		        </p>
+				
 			</div>
 		</form>
 
+        
+                <!-- originaltext Button -->
+				<div id="originaltextbuttoncontainer" style="display:none;" class="mt-4">
+					<button id="originalTextButton" class="btn btn-primary">Original Text</button>
+				</div>
 
 
 	</div>
 
 
-
+      
 
 
 
 
 	<script>
+	
+	    //creating a global variable to store the transcription text
+	    let transcriptionText="";
+	    
+	
         let mediaRecorder;
         let audioChunks = [];
         let fileInput = document.getElementById("fileInput");
@@ -224,8 +248,16 @@ body::before {
             let data = await response.json();
 
             document.getElementById("loading").style.display = "none";
-            resultText.innerText = data.transcription;
+            
+            
+            
+            //storing the trancription text in a global variable
+            transcriptionText=data.transcription;
+            
+            resultText.innerText = transcriptionText;
             resultContainer.style.display = "block";
+            
+            
             
             
         });
@@ -242,13 +274,13 @@ body::before {
             
             
             // Get the transcription text from the #result element
-            let transcriptionText = document.getElementById("result").innerText;
+            //transcriptionText = document.getElementById("result").innerText;
 
             // Get the selected language from the dropdown
             let selectedLanguage = document.getElementById("languageSelect").value;
 
             // Show loading indicator while waiting for the translation
-            document.getElementById("loading").style.display = "block";
+            document.getElementById("loading2").style.display = "block";
 
             // Send a POST request to the backend with the transcription and selected language
             let response = await fetch("/api/audio/translate", {
@@ -266,16 +298,53 @@ body::before {
             let data = await response.json();
 
             // Hide loading indicator after translation is done
-            document.getElementById("loading").style.display = "none";
+            document.getElementById("loading2").style.display = "none";
             
-            translateButton.disabled = false;  // Enable button after translation
+            
 
             // Update the transcription text with the translated text
             document.getElementById("result").innerText = data.translatedText;
+            
+            //hide the form
+            document.getElementById('uploadtextForm').style.display = 'none';
+            
+            //show the original text button
+            document.getElementById('originaltextbuttoncontainer').style.display='block';
+
+           
         });
 
      
      
+     
+     
+     
+     // Add event listener for the show originaltext button
+        document.getElementById("originalTextButton").addEventListener("click", async function() {
+        	
+        	
+        	// Update the translated text with the transcripted text
+            document.getElementById("result").innerText = transcriptionText;
+        	
+        	
+            // hide the original text button
+            document.getElementById('originaltextbuttoncontainer').style.display = 'none';
+            
+            
+            // show the form
+            document.getElementById('uploadtextForm').style.display = 'block';
+            
+            // Enable button after translation
+            let translateButton = document.getElementById("translateButton");
+            translateButton.disabled = false;  
+
+           
+        });
+  
+     
+     
+     
+       
      
      
      
