@@ -245,6 +245,8 @@ body {
   line-height: 1.6;
 }
 
+
+
 #languageContainer {
   background-color: rgba(10, 10, 10, 0.5);
   border-radius: 8px;
@@ -292,6 +294,108 @@ label {
   font-size: 0.9rem;
   opacity: 0.7;
 }
+
+
+
+
+
+
+.transcription-textarea {
+  width: 100%;
+  min-height: 300px;
+  padding: 20px;
+  border: 1px solid rgba(29, 185, 84, 0.5);
+  border-radius: 8px;
+  background: rgba(10, 10, 10, 0.8);
+  color: #ffffff;
+  text-align: left;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+#editOptionsContainer {
+  background-color: rgba(10, 10, 10, 0.5);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 25px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.btn-icon i {
+  margin-right: 0;
+}
+
+.btn-edit {
+  background-color: #FFC107;
+  color: #000;
+}
+
+.btn-edit:hover {
+  background-color: #FFA000;
+}
+
+.btn-save {
+  background-color: #4CAF50;
+  
+}
+
+.btn-save:hover {
+  background-color: #388E3C;
+}
+
+.btn-download {
+  background-color: #7E57C2;
+}
+
+.btn-download:hover {
+  background-color: #5E35B1;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 80px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -40px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
+
+
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -392,6 +496,33 @@ label {
       
       <div id="result" class="transcription-text"></div>
       
+      
+      
+      
+        <!-- Simplified buttons without conflicting classes -->
+<div id="editOptionsContainer" class="d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center gap-2">
+    <button id="editButton" class="btn rounded-pill px-3 py-2 btn-edit">
+      <i class="fas fa-pencil-alt me-2"></i>
+      <span>Edit</span>
+    </button>
+    
+    <button id="saveButton" class="btn rounded-pill px-3 py-2 btn-save" style="display:none;">
+      <i class="fas fa-save me-2"></i>
+      <span>Save</span>
+    </button>
+    
+    <button id="downloadButton" class="btn rounded-pill px-3 py-2 btn-download">
+      <i class="fas fa-download me-2"></i>
+      <span>Download</span>
+    </button>
+  </div>
+</div>
+      
+      
+      
+      
+      
       <form id="uploadtextForm" class="mt-4">
         <div id="languageContainer" class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center">
@@ -432,7 +563,13 @@ label {
           <i class="fas fa-undo"></i> Show Original Text
         </button>
       </div>
-    </div>
+      
+      
+      
+ </div>
+ 
+ 
+ 
     
     <div class="footer">
       <p>© 2025 Audio to Text Converter | All Rights Reserved</p>
@@ -666,6 +803,68 @@ label {
             uploadButton.disabled = true;
             resetButton.style.display = "none";
         });
+        
+        
+        
+     // Edit, Save and Download functionality
+        document.getElementById("editButton").addEventListener("click", function() {
+            let resultDiv = document.getElementById("result");
+            let currentText = resultDiv.innerText;
+            
+            // Create textarea element with the same content
+            let textarea = document.createElement("textarea");
+            textarea.className = "transcription-textarea";
+            textarea.id = "editableText";
+            textarea.value = currentText;
+            
+            // Replace the div with textarea
+            resultDiv.style.display = "none";
+            resultDiv.parentNode.insertBefore(textarea, resultDiv);
+            
+            // Show save button and hide edit button
+            document.getElementById("editButton").style.display = "none";
+            document.getElementById("saveButton").style.display = "inline-flex";
+            
+            // Focus on the textarea
+            textarea.focus();
+        });
+
+        document.getElementById("saveButton").addEventListener("click", function() {
+            let textarea = document.getElementById("editableText");
+            let resultDiv = document.getElementById("result");
+            
+            // Update the text content
+            resultDiv.innerText = textarea.value;
+            transcriptionText = textarea.value; // Update the global variable
+            
+            // Remove textarea and show the result div
+            textarea.remove();
+            resultDiv.style.display = "block";
+            
+            // Show edit button and hide save button
+            document.getElementById("editButton").style.display = "inline-flex";
+            document.getElementById("saveButton").style.display = "none";
+        });
+
+        document.getElementById("downloadButton").addEventListener("click", function() {
+            let content = document.getElementById("result").innerText;
+            let blob = new Blob([content], { type: "text/plain" });
+            let url = URL.createObjectURL(blob);
+            
+            // Create temporary link and trigger download
+            let link = document.createElement("a");
+            link.href = url;
+            link.download = "transcription.txt";
+            document.body.appendChild(link);
+            link.click();
+            
+            // Clean up
+            setTimeout(function() {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
+        });
+        
     </script>
 
 </body>
