@@ -1,10 +1,10 @@
-FROM maven:3.8-openjdk-11
+FROM maven:3.8-openjdk-17
 
 WORKDIR /app
 
 COPY . .
 
-# Run Maven directly instead of using the wrapper
+# Run Maven build
 RUN mvn clean package -DskipTests
 
 # Use the built JAR
