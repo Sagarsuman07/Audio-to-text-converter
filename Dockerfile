@@ -1,13 +1,10 @@
-FROM openjdk:10
+FROM maven:3.8-openjdk-10
 
 WORKDIR /app
 
 COPY . .
 
-# Make build script executable
-RUN chmod +x ./build.sh
-
-# Run build script with detailed output
-RUN bash -x ./build.sh || { echo "Build script failed"; exit 1; }
+# Run Maven directly instead of using the wrapper
+RUN mvn clean package -DskipTests
 
 CMD ["java", "-jar", "target/audiototext-0.0.1-SNAPSHOT.jar"]
