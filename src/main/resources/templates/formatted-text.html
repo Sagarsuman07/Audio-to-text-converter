@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formatted Transcription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .formatted-content {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 20px;
+        }
+        h3 {
+            color: #16a085;
+        }
+        p {
+            margin-bottom: 16px;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .print-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 20px 0;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .print-button:hover {
+            background-color: #2980b9;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Formatted Transcription</h1>
+    <div class="formatted-content" th:utext="${formattedContent}">
+        <!-- The formatted content will be inserted here -->
+    </div>
+    
+    <div class="no-print">
+        <button class="print-button" onclick="window.print()">Print / Save as PDF</button>
+        <a href="javascript:window.close()" class="back-link">← Back to transcription</a>
+    </div>
+    
+    <script>
+        // Add event listener to automatically adjust height of iframes if present
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.onload = function() {
+                    iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+                };
+            });
+        });
+    </script>
+</body>
+</html>

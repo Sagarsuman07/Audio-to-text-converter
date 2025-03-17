@@ -522,6 +522,13 @@ label {
       <i class="fas fa-download me-2"></i>
       <span>export</span>
     </button>
+    
+    <button id="formatBtn" class="btn rounded-pill px-3 py-2 btn-download">
+      <i class="fas fa-download me-2"></i>
+      <span>Format</span>
+    </button>
+    
+    
   </div>
 </div>
       
@@ -652,6 +659,53 @@ label {
       let blob = new Blob([content], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       saveAs(blob, "transcription.docx");
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+//Add event listener to the Format button
+  document.getElementById("formatBtn").addEventListener("click", function() {
+      // Get the transcribed text
+      const transcribedText = document.getElementById("result").innerText;
+      
+      
+      // Create a form to submit the text
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/api/text/format';
+      form.target = '_blank'; // Open in new tab
+      
+      // Create hidden input for the text
+      const textInput = document.createElement('input');
+      textInput.type = 'hidden';
+      textInput.name = 'rawText';
+      textInput.value = transcribedText;
+      
+      // Add the input to the form
+      form.appendChild(textInput);
+      
+      // Add the form to the document body
+      document.body.appendChild(form);
+      
+      // Submit the form
+      form.submit();
+      
+      // Remove the form from the document
+      document.body.removeChild(form);
+      
+      // Hide loading message after a short delay
+      setTimeout(() => {
+          //document.getElementById("loading").style.display = "none";
+      }, 1000);
+  });
+  
+  
+  
   
   
   
