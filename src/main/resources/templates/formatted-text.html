@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formatted Transcription</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.7)),
+                url('https://www.stelizabeth.com/healthyheadlines/wp-content/uploads/2020/10/podcast-headphones-sound-bar.jpg')
+                no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            filter: brightness(0.8);
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 16px 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            color: #9d4edd;
+            font-size: 24px;
+        }
+
+        .site-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Transcript Card */
+        .transcript-card {
+            background: rgba(25, 25, 25, 0.85);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-header {
+    background: linear-gradient(90deg, #36a95f, #10853a);
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Typography */
+        .transcript-text p {
+            margin-bottom: 16px;
+            color: #e0e0e0;
+        }
+        
+        .transcript-text h1{
+         color: #3670a9;
+        }
+
+        .transcript-text h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #36a95f;
+            margin: 24px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(199, 125, 255, 0.3);
+        }
+
+        .transcript-text h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #3fa484;
+            margin: 20px 0 12px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #9d4edd, #7b2cbf);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 44, 191, 0.4);
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: #c77dff;
+            text-decoration: none;
+            padding: 6px 0;
+        }
+
+        .btn-link:hover {
+            color: #e0aaff;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
+            }
+            
+            .site-title {
+                font-size: 16px;
+            }
+            
+            main {
+                padding: 0 16px;
+                margin: 20px auto;
+            }
+            
+            .card-content {
+                padding: 16px;
+            }
+            
+            .transcript-text h2 {
+                font-size: 20px;
+            }
+            
+            .transcript-text h3 {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 10px 12px;
+            }
+            
+            .site-title {
+                font-size: 14px;
+            }
+            
+            .logo-icon {
+                font-size: 18px;
+            }
+            
+            .card-header {
+                padding: 12px 16px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .card-subtitle {
+                font-size: 12px;
+            }
+            
+            .card-content {
+                padding: 14px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            header, .action-buttons {
+                display: none;
+            }
+            
+            .transcript-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .card-header {
+                background: #f0f0f0;
+                color: #000;
+            }
+            
+            .card-title, .card-subtitle {
+                color: #000;
+            }
+            
+            .transcript-text p, .transcript-text h2, .transcript-text h3 {
+                color: #000;
+            }
+            
+            body::before {
+                display: none;
+            }
+            
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">♪</span>
+                <span class="site-title">Formatted Transcription</span>
+            </div>
+            <div class="header-buttons">
+                <!-- Placeholder for future buttons -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="transcript-card">
+            <div class="card-header">
+                <h1 class="card-title">Transcription</h1>
+                <p class="card-subtitle">Formatted for easy reading</p>
+            </div>
+            <div class="card-content">
+                <div class="transcript-text" th:utext="${formattedContent}">
+                    <!-- The formatted content will be inserted here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
+            <a href="javascript:window.close()" class="btn btn-link">← Back to Transcription</a>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.onload = function() {
+                    iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+                };
+            });
+        });
+    </script>
+</body>
+</html>

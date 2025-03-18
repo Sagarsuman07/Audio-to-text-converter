@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .error-container {
+            border: 1px solid #f8d7da;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        h1 {
+            color: #721c24;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error</h1>
+    <div class="error-container">
+        <p th:text="${error}">An error occurred.</p>
+    </div>
+    <a href="javascript:window.close()" class="back-link">← Back to transcription</a>
+</body>
+</html>

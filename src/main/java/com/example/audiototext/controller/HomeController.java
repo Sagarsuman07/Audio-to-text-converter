@@ -10,4 +10,5 @@ public class HomeController {
     public String home() {
         return "upload"; // This will load upload.html from resources/templates/
     }
+    
 }
