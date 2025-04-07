@@ -460,8 +460,18 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
-  
+
 }
+
+
+.modal-title{
+color:blue !important;
+}
+
+.modal-body-text{
+color:black !important;
+}
+
 </style>
 </head>
 <body>
@@ -610,7 +620,7 @@ footer a:hover {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Choose a format to download the file:</p>
+                    <p class="modal-body-text">Choose a format to download the file:</p>
                     <button class="btn btn-outline-secondary m-2" onclick="downloadFile('txt')">TXT</button>
                     <button class="btn btn-outline-danger m-2" onclick="downloadFile('pdf')">PDF</button>
                     <button class="btn btn-outline-primary m-2" onclick="downloadFile('docx')">DOCX</button>
@@ -984,6 +994,9 @@ footer a:hover {
             document.getElementById("editButton").style.display = "none";
             document.getElementById("saveButton").style.display = "inline-flex";
             
+            //disable magic button
+            document.getElementById("formatBtn").disabled=true;
+            
             // Focus on the textarea
             textarea.focus();
         });
@@ -991,6 +1004,7 @@ footer a:hover {
         document.getElementById("saveButton").addEventListener("click", function() {
         	
         	document.getElementById("downloadButton").disabled=false;
+        	document.getElementById("formatBtn").disabled=false;
             let textarea = document.getElementById("editableText");
             let resultDiv = document.getElementById("result");
             
