@@ -24,6 +24,8 @@ public class AudioController {
     private TranslationService translationService;
 
     private static final int MAX_DURATION_SECONDS = 120;
+    
+    
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadAudio(
@@ -49,6 +51,8 @@ public class AudioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         } 
     }
+    
+    
 
     @PostMapping("/translate")
     public ResponseEntity<Map<String, String>> translateText(@RequestBody Map<String, String> request) {
