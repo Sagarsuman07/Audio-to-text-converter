@@ -1,9 +1,16 @@
-FROM maven:3.8-openjdk-17
+# Stage 1: Build with Maven
+FROM maven:3.8-openjdk-17 AS builder
 
-# Switch to root to install ffmpeg
-USER root
+WORKDIR /app
 
-# Install ffmpeg and dependencies
+COPY . .
+
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime with FFmpeg support
+FROM openjdk:17-slim
+
+# Install FFmpeg
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get clean && \
@@ -12,14 +19,8 @@ RUN apt-get update && \
 # Create app directory
 WORKDIR /app
 
-# Copy all project files
-COPY . .
-
-# Build the project
-RUN mvn clean package -DskipTests
-
-# Expose port (optional, in case you use it)
-# EXPOSE 8080
+# Copy only the final JAR from the builder stage
+COPY --from=builder /app/target/audiototext-0.0.1-SNAPSHOT.jar .
 
 # Run the app
-CMD ["java", "-jar", "target/audiototext-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "audiototext-0.0.1-SNAPSHOT.jar"]
