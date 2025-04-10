@@ -2,10 +2,14 @@ FROM maven:3.8-openjdk-17
 
 WORKDIR /app
 
+# Install FFmpeg
+RUN apt-get update && apt-get install -y ffmpeg && apt-get clean
+
+# Copy project files
 COPY . .
 
-# Run Maven build
+# Build the project
 RUN mvn clean package -DskipTests
 
-# Use the built JAR
+# Run the app
 CMD ["java", "-jar", "target/audiototext-0.0.1-SNAPSHOT.jar"]
