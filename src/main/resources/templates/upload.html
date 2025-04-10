@@ -460,8 +460,18 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
-  
+
 }
+
+
+.modal-title{
+color:blue !important;
+}
+
+.modal-body-text{
+color:black !important;
+}
+
 </style>
 </head>
 <body>
@@ -610,7 +620,7 @@ footer a:hover {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Choose a format to download the file:</p>
+                    <p class="modal-body-text">Choose a format to download the file:</p>
                     <button class="btn btn-outline-secondary m-2" onclick="downloadFile('txt')">TXT</button>
                     <button class="btn btn-outline-danger m-2" onclick="downloadFile('pdf')">PDF</button>
                     <button class="btn btn-outline-primary m-2" onclick="downloadFile('docx')">DOCX</button>
@@ -874,27 +884,63 @@ footer a:hover {
      
      
        
+        
+        
         let rec, audioChunks = [], recording = false;
+        let micPermissionGranted = false;
+        let recordingTimeout = null; // to track 2-minute timeout
 
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
+        async function requestMicAndStartRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                micPermissionGranted = true;
                 rec = new MediaRecorder(stream);
+                audioChunks = [];
+
                 rec.ondataavailable = e => {
                     audioChunks.push(e.data);
                     if (rec.state === "inactive") {
                         let blob = new Blob(audioChunks, { type: 'audio/mp3' });
-                       
                         sendData(blob);
                     }
                 };
-            });
+
+                rec.start();
+                recording = true;
+                updateRecordButton();
+
+                // Automatically stop after 2 minutes (120,000 ms)
+                recordingTimeout = setTimeout(() => {
+                    if (recording && rec && rec.state !== "inactive") {
+                        rec.stop();
+                        recording = false;
+                        updateRecordButton();
+                        alert("Recording automatically stopped after 2 minutes.");
+                    }
+                }, 120000); // 2 minutes = 120,000 milliseconds
+
+            } catch (err) {
+                console.warn("Microphone access denied or error:", err);
+                micPermissionGranted = false;
+                alert("Microphone access is denied. Please enable it in your browser settings and try again.");
+            }
+        }
+
+        function updateRecordButton() {
+            const recordBtn = document.getElementById("record");
+            if (recording) {
+                recordBtn.textContent = "Stop";
+                recordBtn.style.backgroundColor = "blue";
+            } else {
+                recordBtn.textContent = "Record";
+                recordBtn.style.backgroundColor = "red";
+            }
+        }
 
         function sendData(data) {
-        	
-        	//start spinner
-        	document.getElementById("loading").style.display = "block";
-        	
-        	
+            document.getElementById("loading").style.display = "block";
+
             let formData = new FormData();
             formData.append("file", data, "recording.mp3");
 
@@ -907,46 +953,42 @@ footer a:hover {
             })
             .then(response => response.json())
             .then(result => {
-            	transcriptionText=result.transcription;
+                let transcriptionText = result.transcription;
                 document.getElementById("result").innerText = transcriptionText || "No transcription available";
                 document.getElementById("transcriptionContainer").style.display = "block";
-                
-                //stop spinner
-            	document.getElementById("loading").style.display = "none";
-                
-                // hide the original text button
-                document.getElementById('originaltextbuttoncontainer').style.display = 'none';
-                
-                
-                // show the form
-                document.getElementById('uploadtextForm').style.display = 'block';
-                
-                // Enable button after translation
-                let translateButton = document.getElementById("translateButton");
-                translateButton.disabled = false;  
 
+                document.getElementById("loading").style.display = "none";
+                document.getElementById('originaltextbuttoncontainer').style.display = 'none';
+                document.getElementById('uploadtextForm').style.display = 'block';
+
+                document.getElementById("translateButton").disabled = false;
             })
             .catch(error => {
                 console.error("Error:", error);
                 document.getElementById("result").innerText = "Error processing transcription.";
+                document.getElementById("loading").style.display = "none";
             });
         }
 
-
-
         document.getElementById("record").onclick = function () {
             if (!recording) {
-                this.textContent = "Stop";
-                this.style.backgroundColor = "blue";
-                audioChunks = [];
-                rec.start();
+                requestMicAndStartRecording();
             } else {
-                this.textContent = "Record";
-                this.style.backgroundColor = "red";
-                rec.stop();
+                if (rec && rec.state !== "inactive") {
+                    rec.stop();
+                }
+                recording = false;
+                clearTimeout(recordingTimeout); // stop auto-stop timer
+                updateRecordButton();
             }
-            recording = !recording;
         };
+
+
+
+    
+
+    
+
      
      
 
@@ -984,6 +1026,9 @@ footer a:hover {
             document.getElementById("editButton").style.display = "none";
             document.getElementById("saveButton").style.display = "inline-flex";
             
+            //disable magic button
+            document.getElementById("formatBtn").disabled=true;
+            
             // Focus on the textarea
             textarea.focus();
         });
@@ -991,6 +1036,7 @@ footer a:hover {
         document.getElementById("saveButton").addEventListener("click", function() {
         	
         	document.getElementById("downloadButton").disabled=false;
+        	document.getElementById("formatBtn").disabled=false;
             let textarea = document.getElementById("editableText");
             let resultDiv = document.getElementById("result");
             
