@@ -20,6 +20,8 @@ body {
 }
 
 .app-container {
+  display:flex;
+  flex-direction:column;
   max-width: 800px;
   margin: 0 auto;
   padding: 0 20px;
@@ -34,7 +36,7 @@ body {
   font-weight: 700;
   font-size: 2.8rem;
   margin-bottom: 15px;
-  background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+  background:linear-gradient(90deg, #0bcf17, #02027d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -457,3 +459,68 @@ color:blue !important;
 .modal-body-text{
 color:black !important;
 }
+
+
+
+
+
+
+
+
+
+
+.tab-container {
+  display: inline-flex;
+  align-self:center;
+  background-color: #1616167d;
+  padding: 0.5rem;
+  border-radius: 10px;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background-color: rgb(64 71 113 / 15%);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #adb5bd;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tab:hover {
+  background-color: rgb(79 110 137 / 25%);
+}
+
+.tab.active {
+  background-color: #1DB954;
+  color: white;
+}
+
+.tab-content {
+  padding: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Medium screen (tablet) */
+@media (max-width: 768px) {
+  .tab {
+    font-size: 14px;
+    padding: 5px 10px;
+  }
+}
+
+/* Small screen (mobile) */
+@media (max-width: 480px) {
+  .tab {
+    font-size: 12px;
+    padding: 5px 5px;
+  }
+}
+
