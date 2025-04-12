@@ -16,27 +16,27 @@ body {
   color: var(--light-text);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
-  padding: 30px 0;
+  padding: 20px 0;
 }
 
 .app-container {
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .header h1 {
   font-weight: 700;
   font-size: 2.8rem;
   margin-bottom: 15px;
-  background:linear-gradient(90deg, #0bcf17, #02027d);
+  background: linear-gradient(90deg, #0bcf17, #02027d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -53,8 +53,8 @@ body {
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 30px;
-  margin-bottom: 30px;
+  padding: 25px;
+  margin-bottom: 25px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 }
@@ -75,7 +75,7 @@ body {
 .upload-area {
   border: 2px dashed rgba(255, 255, 255, 0.2);
   border-radius: 10px;
-  padding: 25px;
+  padding: 20px;
   text-align: center;
   transition: all 0.3s ease;
   margin-bottom: 15px;
@@ -210,8 +210,8 @@ body {
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 30px;
-  margin-top: 30px;
+  padding: 25px;
+  margin-top: 25px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   display: none;
@@ -237,8 +237,6 @@ body {
   font-size: 1.1rem;
   line-height: 1.6;
 }
-
-
 
 #languageContainer {
   background-color: rgba(10, 10, 10, 0.5);
@@ -282,16 +280,11 @@ label {
 
 .footer {
   text-align: center;
-  margin-top: 40px;
-  padding: 20px 0;
+  margin-top: 30px;
+  padding: 15px 0;
   font-size: 0.9rem;
   opacity: 0.7;
 }
-
-
-
-
-
 
 .transcription-textarea {
   width: 100%;
@@ -313,7 +306,6 @@ label {
   padding: 15px;
   margin-top: 25px;
 }
-
 
 .btn-icon {
   width: 36px;
@@ -341,7 +333,6 @@ label {
 
 .btn-save {
   background-color: #1db954;
-  
 }
 
 .btn-save:hover {
@@ -385,15 +376,9 @@ label {
   opacity: 1;
 }
 
-
-
-
-
-
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -410,69 +395,9 @@ label {
   background: rgba(29, 185, 84, 0.5);
 }
 
-@media (max-width: 768px) {
-  .header h1 {
-    font-size: 2.2rem;
-  }
-  
-  .file-input-container {
-    flex-direction: column;
-  }
-  
-  .file-input-wrapper {
-    margin-right: 0;
-    margin-bottom: 15px;
-    width: 100%;
-  }
-  
-  #languageContainer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  #languageSelect {
-    width: 100% !important;
-    margin-bottom: 15px;
-  }
-  
-  footer {
-    text-align: center;
-    padding: 10px;
-    font-size: 14px;
-}
-footer a {
-    text-decoration: none;
-    color: #007bff;
-    margin: 0 8px;
-    
-}
-footer a:hover {
-    text-decoration: underline;
-}
-
-}
-
-
-.modal-title{
-color:blue !important;
-}
-
-.modal-body-text{
-color:black !important;
-}
-
-
-
-
-
-
-
-
-
-
 .tab-container {
   display: inline-flex;
-  align-self:center;
+  align-self: center;
   background-color: #1616167d;
   padding: 0.5rem;
   border-radius: 10px;
@@ -509,27 +434,84 @@ color:black !important;
   display: none;
 }
 
-/* Medium screen (tablet) */
+.modal-title {
+  color: blue !important;
+}
+
+.modal-body-text {
+  color: black !important;
+}
+
+footer {
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+footer a {
+  text-decoration: none;
+  color: #007bff;
+  margin: 0 8px;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Enhanced Responsive Styles */
 @media (max-width: 768px) {
+  body {
+    padding: 15px 0;
+  }
+  
+  .app-container {
+    padding: 0 10px;
+  }
+  
+  .header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .header p {
+    font-size: 1rem;
+  }
+  
+  .converter-card, #transcriptionContainer {
+    padding: 20px 15px;
+  }
+  
+  .file-input-container {
+    flex-direction: column;
+  }
+  
+  .file-input-wrapper {
+    margin-right: 0;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  #languageContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  #languageSelect {
+    width: 100% !important;
+    margin-bottom: 15px;
+  }
+  
   .tab {
     font-size: 14px;
-    padding: 5px 10px;
+    padding: 8px 15px;
   }
-}
-
-/* Small screen (mobile) */
-@media (max-width: 480px) {
-  .tab {
-    font-size: 12px;
-    padding: 5px 5px;
+  
+  /* Button spacing and sizing */
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
-}
-
-
-/* Add these rules to your existing CSS file */
-
-/* Make edit options responsive */
-@media (max-width: 768px) {
+  
+  /* Edit options container responsiveness */
   #editOptionsContainer {
     flex-direction: column;
     gap: 15px;
@@ -539,6 +521,7 @@ color:black !important;
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
+    width: 100%;
   }
   
   #editOptionsContainer button {
@@ -546,18 +529,137 @@ color:black !important;
     padding: 8px 16px;
     margin: 5px 0;
   }
+  
+  /* Modal dialog for small screens */
+  .modal-dialog {
+    margin: 0.5rem;
+  }
 }
 
-/* For very small screens */
+/* For very small screens (mobile phones) */
 @media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .header p {
+    font-size: 0.9rem;
+  }
+  
+  .converter-card h3, #transcriptionContainer h4 {
+    font-size: 1.3rem;
+  }
+  
+  .tab {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  
   #editOptionsContainer button {
     font-size: 0.8rem;
     padding: 6px 12px;
-    width: 100%;
+    width: 50%;
   }
   
   #editOptionsContainer .d-flex {
     flex-direction: column;
     width: 100%;
   }
+  
+  /* Language container and translate button */
+  #translateContainer {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  #translateButton {
+    width: 100%;
+  }
+  
+  #languageSelect {
+    margin-right: 0 !important;
+  }
+  
+  /* Improve readability on small screens */
+  .transcription-text {
+    font-size: 1rem;
+    padding: 15px;
+  }
+  
+  /* Form controls */
+  .form-control, .form-select {
+    font-size: 0.9rem;
+  }
+  
+  .upload-area {
+    padding: 15px;
+  }
+  
+  /* Footer */
+  footer {
+    font-size: 12px;
+    padding: 5px;
+  }
+}
+
+.button-scroll-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+.button-scroll-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.button-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+/* Remove the column direction for buttons */
+@media (max-width: 768px) {
+    #editOptionsContainer .d-flex {
+        /* Remove flex-direction: column here */
+        justify-content: flex-start;
+        width: 100%;
+    }
+    
+    #editOptionsContainer button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        margin: 5px 0;
+        /* Remove width: 100% */
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #editOptionsContainer .d-flex {
+        /* Remove flex-direction: column here */
+    }
+    
+    #editOptionsContainer button {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+        /* Remove width: 100% */
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .reset-text, .speaker-text {
+        font-size: 0.8rem;
+    }
+    
+    /* For extremely small screens, show only icons */
+    @media (max-width: 350px) {
+        .reset-text, .speaker-text {
+            display: none;
+        }
+    }
 }
