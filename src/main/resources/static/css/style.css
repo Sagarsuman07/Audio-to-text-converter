@@ -314,6 +314,7 @@ label {
   margin-top: 25px;
 }
 
+
 .btn-icon {
   width: 36px;
   height: 36px;
@@ -524,3 +525,39 @@ color:black !important;
   }
 }
 
+
+/* Add these rules to your existing CSS file */
+
+/* Make edit options responsive */
+@media (max-width: 768px) {
+  #editOptionsContainer {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  #editOptionsContainer .d-flex {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  #editOptionsContainer button {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    margin: 5px 0;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  #editOptionsContainer button {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    width: 100%;
+  }
+  
+  #editOptionsContainer .d-flex {
+    flex-direction: column;
+    width: 100%;
+  }
+}
