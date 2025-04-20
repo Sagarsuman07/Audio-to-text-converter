@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,15 @@ public class AudioController {
 
             // Transcribe the audio
             String transcript = assemblyAIService.transcribeAudio(trimmedFile, separateSpeakers);
+            
+         // Convert audio to Base64
+            String base64Audio = Base64.getEncoder().encodeToString(trimmedFile.getBytes());
+            
+            
+         // Add both to response
             response.put("transcription", transcript);
+            response.put("audioBase64", base64Audio);
+            response.put("filename", trimmedFile.getOriginalFilename());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

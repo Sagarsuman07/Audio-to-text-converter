@@ -39,11 +39,20 @@
 		</div>
 
 
-		<!-- Saved Transcripts Section -->
-		<div id="saved-section" class="tab-content hidden">
-			<h2>Saved Transcriptions</h2>
-			<!-- This will show previously saved texts -->
+		<!-- Saved Transcriptions Section -->
+		<div id="saved-section" class="tab-content hidden p-4 space-y-6">
+
+			<h2 class="text-xl font-semibold mb-4">Saved Transcriptions</h2>
+
+			<!-- Transcript Display -->
+			<div id="transcript-display"
+				class="hidden p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-sm"></div>
+
+			<!-- Container for all saved audios -->
+			<div id="saved-transcriptions-container" class="space-y-4"></div>
 		</div>
+
+
 
 		<div class="converter-card" id="transcriptionContainer2">
 			<h3>
@@ -121,7 +130,7 @@
 
 					<button id="downloadButton"
 						class="btn rounded-pill px-3 py-2 btn-download">
-						 <span>export text</span>
+						<span>export text</span>
 					</button>
 
 					<button id="save2DB"
@@ -201,6 +210,40 @@
 				</div>
 			</div>
 		</div>
+
+
+
+		<!-- Login/Signup Modal -->
+		<div id="authModal" class="modal" style="display: none;">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<div>
+					<button id="switchToLogin">Login</button>
+					<button id="switchToSignup">Signup</button>
+				</div>
+
+				<!-- Login Form -->
+				<form id="loginForm">
+					<h3>Login</h3>
+					<input type="text" id="loginUsername" placeholder="Username"
+						required> <input type="password" id="loginPassword"
+						placeholder="Password" required>
+					<button type="submit">Login</button>
+				</form>
+
+				<!-- Signup Form -->
+				<form id="signupForm" style="display: none;">
+					<h3>Signup</h3>
+					<input type="text" id="signupUsername" placeholder="Username"
+						required> <input type="password" id="signupPassword"
+						placeholder="Password" required>
+					<button type="submit">Signup</button>
+				</form>
+			</div>
+		</div>
+
+
+
 
 		<footer style="text-align: center; padding: 10px;">
 			<p>

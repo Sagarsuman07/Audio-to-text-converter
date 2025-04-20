@@ -100,7 +100,8 @@ document.getElementById("formatBtn").addEventListener("click", function() {
 //creating a global variable to store the transcription text
 let transcriptionText = "";
 
-
+// creating a global variable to store the trimmed audio blob
+let trimmedAudioBlob = null;
 
 let fileInput = document.getElementById("fileInput");
 let recordButton = document.getElementById("record");
@@ -148,9 +149,159 @@ document.getElementById("uploadForm").addEventListener("submit", async function(
 	resultContainer.style.display = "block";
 
 
+	// convert Base64 audio to Blob and store in global variable
+	if (data.audioBase64) {
+		const byteCharacters = atob(data.audioBase64);
+		const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+		const byteArray = new Uint8Array(byteNumbers);
+		trimmedAudioBlob = new Blob([byteArray], { type: 'audio/wav' }); // or 'audio/mp3' depending on your format
+	}
 
 
 });
+
+
+
+
+
+
+
+
+
+// saving to database
+const saveButton = document.getElementById("save2DB");
+const modal = document.getElementById("authModal");
+const closeModal = document.querySelector(".close");
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
+
+document.getElementById("switchToLogin").onclick = () => {
+	loginForm.style.display = "flex";
+	signupForm.style.display = "none";
+};
+
+document.getElementById("switchToSignup").onclick = () => {
+	loginForm.style.display = "none";
+	signupForm.style.display = "flex";
+};
+
+closeModal.onclick = () => {
+	modal.style.display = "none";
+};
+
+// Main SAVE button
+saveButton.addEventListener("click", async () => {
+	const isLoggedIn = await checkLoginStatus();
+	if (isLoggedIn) {
+		saveToDB(); // already logged in, go ahead and save
+	} else {
+		modal.style.display = "block"; // not logged in, open modal
+
+
+		// Login
+		loginForm.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			const username = document.getElementById("loginUsername").value;
+			const password = document.getElementById("loginPassword").value;
+
+			const response = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ username, password }),
+			});
+
+			if (response.ok) {
+				modal.style.display = "none";
+				saveToDB();
+				//alert("Login successful. Now click Save again to save your transcription.");
+			} else {
+				alert("Login failed");
+			}
+		});
+
+
+
+		// Signup
+		signupForm.addEventListener("submit", async function(e) {
+			e.preventDefault();
+
+			const username = document.getElementById("signupUsername").value;
+			const password = document.getElementById("signupPassword").value;
+
+			const response = await fetch("/api/auth/signup", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ username, password }),
+			});
+
+			if (response.ok) {
+				modal.style.display = "none";
+				saveToDB();
+				//alert("Signup successful. Now click Save again to save your transcription.");
+			} else {
+				alert("Signup failed");
+			}
+		});
+
+	}
+});
+
+
+
+
+
+// Actual save call
+async function saveToDB() {
+	if (!trimmedAudioBlob || !transcriptionText) {
+		alert("Audio or transcription not available");
+		return;
+	}
+
+
+	// Prepare form data
+	const formData = new FormData();
+	formData.append("transcription", transcriptionText);
+	formData.append("file", trimmedAudioBlob, "trimmed_audio.wav"); // 🔧 Must match backend param
+
+	const response = await fetch("/api/transcription/save", {
+		method: "POST",
+		body: formData,
+	});
+
+	if (response.ok) {
+		alert("Saved successfully");
+	} else {
+		const errorText = await response.text();
+		alert("Failed to save: " + errorText);
+	}
+}
+
+
+
+
+
+// Check login status
+async function checkLoginStatus() {
+	const res = await fetch("/api/auth/status");
+	const data = await res.json();
+	return data.loggedIn;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -308,7 +459,7 @@ function sendData(data) {
 			let transcriptionText = result.transcription;
 			document.getElementById("result").innerText = transcriptionText || "No transcription available";
 			document.getElementById("transcriptionContainer").style.display = "block";
-			
+
 			//show reset button 
 			resetButton.style.display = "block";
 
@@ -399,6 +550,138 @@ document.addEventListener("DOMContentLoaded", type);
 
 
 
+
+
+
+
+
+
+
+async function showSavedTranscriptions() {
+	const isLoggedIn = await checkLoginStatus();
+
+	if (!isLoggedIn) {
+		document.getElementById("authModal").style.display = "block";
+
+		// If login/signup fails, switch back to transcribe
+		const onClose = () => {
+			document.getElementById("authModal").style.display = "none";
+			showTab('transcribe');
+		};
+
+		document.querySelector(".close").onclick = onClose;
+
+		document.getElementById("loginForm").onsubmit = async (e) => {
+			e.preventDefault();
+			const username = document.getElementById("loginUsername").value;
+			const password = document.getElementById("loginPassword").value;
+			const response = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username, password })
+			});
+			if (response.ok) {
+				document.getElementById("authModal").style.display = "none";
+
+				loadSavedTranscriptions();
+
+				transcriptionContainer.style.display = "none";
+				transcriptionContainer2.style.display = "none";
+
+				document.getElementById('saved-section').classList.remove('hidden');
+
+
+			} else {
+				alert("Login failed");
+				onClose();
+			}
+		};
+
+		document.getElementById("signupForm").onsubmit = async (e) => {
+			e.preventDefault();
+			const username = document.getElementById("signupUsername").value;
+			const password = document.getElementById("signupPassword").value;
+			const response = await fetch("/api/auth/signup", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username, password })
+			});
+			if (response.ok) {
+				document.getElementById("authModal").style.display = "none";
+
+				loadSavedTranscriptions();
+
+				transcriptionContainer.style.display = "none";
+				transcriptionContainer2.style.display = "none";
+
+				document.getElementById('saved-section').classList.remove('hidden');
+			} else {
+				alert("Signup failed");
+				onClose();
+			}
+		};
+
+		return;
+	}
+	// If logged in
+	else {
+		loadSavedTranscriptions();
+
+		transcriptionContainer.style.display = "none";
+		transcriptionContainer2.style.display = "none";
+
+		document.getElementById('saved-section').classList.remove('hidden');
+
+	}
+}
+
+async function loadSavedTranscriptions() {
+	const container = document.getElementById("saved-transcriptions-container");
+	container.innerHTML = ""; // clear previous
+
+	const response = await fetch("/api/transcription/list");
+	if (!response.ok) {
+		alert("Failed to load saved transcriptions");
+		return;
+	}
+	const data = await response.json();
+
+	const transcriptDisplay = document.getElementById("transcript-display");
+	transcriptDisplay.classList.add("hidden");
+
+	data.forEach(item => {
+		const div = document.createElement("div");
+		div.className = "p-4 bg-white rounded-lg shadow flex items-center justify-between";
+
+		const audio = document.createElement("audio");
+		audio.controls = true;
+		audio.src = `data:audio/wav;base64,${item.audioBase64}`;
+		audio.className = "mr-4";
+
+		const btn = document.createElement("button");
+		btn.textContent = "Show Transcript";
+		btn.className = "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600";
+		btn.onclick = () => {
+			transcriptDisplay.textContent = item.transcription;
+			transcriptDisplay.classList.remove("hidden");
+			transcriptDisplay.scrollIntoView({ behavior: "smooth" });
+		};
+
+		div.appendChild(audio);
+		div.appendChild(btn);
+		container.appendChild(div);
+	});
+}
+
+
+
+
+
+
+
+
+
+
 //saved text toggle
 
 function showTab(tab) {
@@ -428,10 +711,9 @@ function showTab(tab) {
 	}
 	else if (tab === 'saved') {
 		document.querySelector('[onclick="showTab(\'saved\')"]').classList.add('active');
-		document.getElementById('saved-section').classList.remove('hidden');
+		showSavedTranscriptions();
 
-		transcriptionContainer.style.display = "none";
-		transcriptionContainer2.style.display = "none";
+
 	}
 }
 
